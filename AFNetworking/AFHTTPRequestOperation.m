@@ -188,7 +188,7 @@ NSString * AFCreateIncompleteDownloadDirectoryPath(void) {
 }
 
 - (BOOL)hasAcceptableStatusCode {
-    return ![[self class] acceptableStatusCodes] || [[[self class] acceptableStatusCodes] containsIndex:[self.response statusCode]];
+    return ![self.response isKindOfClass:[NSHTTPURLResponse class]] || ![[self class] acceptableStatusCodes] || [[[self class] acceptableStatusCodes] containsIndex:[self.response statusCode]];
 }
 
 - (BOOL)hasAcceptableContentType {
@@ -308,7 +308,7 @@ didReceiveResponse:(NSURLResponse *)response
     // 206 = Partial Content.
     long long totalContentLength = self.response.expectedContentLength;
     long long fileOffset = 0;
-    if ([self.response statusCode] != 206) {
+    if (![self.response isKindOfClass:[NSHTTPURLResponse class]] || [self.response statusCode] != 206) {
         if ([self.outputStream propertyForKey:NSStreamFileCurrentOffsetKey]) {
             [self.outputStream setProperty:[NSNumber numberWithInteger:0] forKey:NSStreamFileCurrentOffsetKey];
         } else {
